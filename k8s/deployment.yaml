@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comptes
+  namespace: z1-dmz
+  labels:
+    app: comptes
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: comptes
+  template:
+    metadata:
+      labels:
+        app: comptes
+    spec:
+      serviceAccountName: comptes
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65532
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: comptes
+          # Toujours un digest, jamais un tag : le pipeline remplace ce digest
+          # par celui de l'image qu'il vient de signer.
+          image: ghcr.io/kalipay-demo/comptes@sha256:0000000000000000000000000000000000000000000000000000000000000000
+          ports:
+            - containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            periodSeconds: 20
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: comptes
+  namespace: z1-dmz
+automountServiceAccountToken: false

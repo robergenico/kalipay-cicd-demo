@@ -1,0 +1,7 @@
+.git
+.github
+demo
+infra
+k8s
+policies
+*.md

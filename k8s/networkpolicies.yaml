@@ -1,0 +1,59 @@
+# Tout est refusé par défaut dans le namespace (livrable 13, contrôle 2)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: z1-dmz
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress", "Egress"]
+---
+# M1 : la passerelle d'entrée (derrière FW1) appelle le back-end de l'appli
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: comptes-depuis-passerelle
+  namespace: z1-dmz
+  annotations:
+    kalipay.fr/flux: M1
+spec:
+  podSelector:
+    matchLabels:
+      app: comptes
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: z1-dmz
+          podSelector:
+            matchLabels:
+              app: passerelle
+      ports:
+        - protocol: TCP
+          port: 8080
+---
+# M11/M12 : le back-office lit les comptes (lecture seule, jetons uniquement)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: comptes-depuis-backoffice
+  namespace: z1-dmz
+  annotations:
+    kalipay.fr/flux: M12
+spec:
+  podSelector:
+    matchLabels:
+      app: comptes
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: z4-backoffice
+          podSelector:
+            matchLabels:
+              app: backoffice
+      ports:
+        - protocol: TCP
+          port: 8080

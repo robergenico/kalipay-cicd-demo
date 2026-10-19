@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.terraform/
+*.tfstate*
+zap-rapport.html
+sbom.cdx.json

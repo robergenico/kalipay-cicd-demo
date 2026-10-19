@@ -1,0 +1,29 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-conforme
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: app
+      image: ghcr.io/kalipay-demo/comptes:1.0.0
+      securityContext:
+        allowPrivilegeEscalation: false
+        runAsUser: 65532
+      resources:
+        limits:
+          cpu: 500m
+          memory: 256Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-root
+spec:
+  containers:
+    - name: app
+      image: ghcr.io/kalipay-demo/comptes:1.0.0
+      securityContext:
+        privileged: true
+        runAsUser: 0

@@ -1,0 +1,8 @@
+directory:
+  - infra/terraform
+  - k8s
+framework:
+  - terraform
+  - kubernetes
+compact: true
+quiet: true

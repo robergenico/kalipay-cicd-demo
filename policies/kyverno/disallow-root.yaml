@@ -1,0 +1,28 @@
+# Refuse les conteneurs root, privilégiés ou capables d'élever leurs droits
+# (livrable 13, contrôle 4). Kyverno l'étend automatiquement aux Deployments.
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: interdire-root-et-privilegie
+spec:
+  validationActions: [Deny]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  variables:
+    - name: podNonRoot
+      expression: "object.spec.?securityContext.?runAsNonRoot.orValue(false)"
+  validations:
+    - message: "Chaque conteneur doit tourner en non-root (runAsNonRoot au niveau du pod ou du conteneur)."
+      expression: >-
+        object.spec.containers.all(c,
+          c.?securityContext.?runAsNonRoot.orValue(variables.podNonRoot) &&
+          c.?securityContext.?runAsUser.orValue(1) != 0)
+    - message: "Aucun conteneur privilégié ni élévation de droits."
+      expression: >-
+        object.spec.containers.all(c,
+          !c.?securityContext.?privileged.orValue(false) &&
+          c.?securityContext.?allowPrivilegeEscalation.orValue(true) == false)

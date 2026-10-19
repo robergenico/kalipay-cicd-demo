@@ -1,0 +1,19 @@
+# Extrait de la matrice de flux du dossier (livrables 7 et 14), limité aux flux
+# portés par des NetworkPolicies Kubernetes dans cette démo.
+# Toute règle réseau qui ne correspond à aucune ligne est refusée par le pipeline.
+flows:
+  - id: M1
+    description: Passerelle d'entrée vers le back-end de l'appli
+    from: {namespace: z1-dmz, app: passerelle}
+    to: {namespace: z1-dmz, app: comptes}
+    port: 8080
+  - id: M12
+    description: Back-office en lecture seule, jetons uniquement (simplifié pour la démo)
+    from: {namespace: z4-backoffice, app: backoffice}
+    to: {namespace: z1-dmz, app: comptes}
+    port: 8080
+  - id: M7
+    description: Autorisation vers anti-fraude, jeton seulement
+    from: {namespace: z9-autorisation, app: autorisation}
+    to: {namespace: z5-coeur, app: antifraude}
+    port: 50051

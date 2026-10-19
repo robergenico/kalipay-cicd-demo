@@ -1,0 +1,32 @@
+# Seules les images signées par le pipeline de la branche main entrent dans le
+# cluster (M15, E6). Une image construite à la main est refusée.
+apiVersion: policies.kyverno.io/v1
+kind: ImageValidatingPolicy
+metadata:
+  name: images-signees-uniquement
+spec:
+  validationActions: [Deny]
+  webhookConfiguration:
+    timeoutSeconds: 30
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  matchImageReferences:
+    - glob: "ghcr.io/*"
+  attestors:
+    - name: pipeline
+      cosign:
+        keyless:
+          identities:
+            - issuer: "https://token.actions.githubusercontent.com"
+              # À adapter : owner/dépôt de la démo
+              subject: "https://github.com/OWNER/kalipay-cicd-demo/.github/workflows/pipeline.yml@refs/heads/main"
+        ctlog:
+          url: https://rekor.sigstore.dev
+  validations:
+    - message: "Image non signée par le pipeline Kalipay."
+      expression: >-
+        images.containers.map(image, verifyImageSignatures(image, [attestors.pipeline])).all(e, e > 0)

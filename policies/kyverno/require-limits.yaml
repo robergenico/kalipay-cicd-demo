@@ -1,0 +1,19 @@
+# Un pod sans limites peut épuiser un nœud et faire tomber ses voisins (E1).
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: exiger-limites-ressources
+spec:
+  validationActions: [Deny]
+  matchConstraints:
+    resourceRules:
+      - apiGroups: [""]
+        apiVersions: ["v1"]
+        operations: ["CREATE", "UPDATE"]
+        resources: ["pods"]
+  validations:
+    - message: "Chaque conteneur doit déclarer des limites CPU et mémoire."
+      expression: >-
+        object.spec.containers.all(c,
+          has(c.resources) && has(c.resources.limits) &&
+          'cpu' in c.resources.limits && 'memory' in c.resources.limits)

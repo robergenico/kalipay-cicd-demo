@@ -1,0 +1,5 @@
+# Règles ZAP : FAIL bloque le pipeline, WARN est seulement signalé.
+10020	FAIL	(En-tête anti-clickjacking absent)
+10021	FAIL	(X-Content-Type-Options absent)
+10038	WARN	(Content Security Policy absente)
+10049	IGNORE	(Contenu non stockable en cache)

@@ -1,0 +1,26 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: politiques-kalipay
+policies:
+  - ../disallow-root.yaml
+  - ../require-limits.yaml
+resources:
+  - pods.yaml
+results:
+  - policy: interdire-root-et-privilegie
+    resources: ["pod-conforme"]
+    kind: Pod
+    result: pass
+  - policy: interdire-root-et-privilegie
+    resources: ["pod-root"]
+    kind: Pod
+    result: fail
+  - policy: exiger-limites-ressources
+    resources: ["pod-conforme"]
+    kind: Pod
+    result: pass
+  - policy: exiger-limites-ressources
+    resources: ["pod-root"]
+    kind: Pod
+    result: fail

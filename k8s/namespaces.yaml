@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: z1-dmz
+  labels:
+    kalipay.fr/zone: z1
+    pod-security.kubernetes.io/enforce: restricted
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: z4-backoffice
+  labels:
+    kalipay.fr/zone: z4
+    pod-security.kubernetes.io/enforce: restricted

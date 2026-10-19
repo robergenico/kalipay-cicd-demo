@@ -1,0 +1,9 @@
+# Règles par défaut de gitleaks + règle Kalipay pour les anciennes clés d'API partenaires
+[extend]
+useDefault = true
+
+[[rules]]
+id = "kalipay-cle-api-partenaire"
+description = "Clé d'API partenaire Kalipay (format fixe abandonné après l'incident de 2025)"
+regex = '''kp_(live|test)_[A-Za-z0-9]{32}'''
+keywords = ["kp_live_", "kp_test_"]

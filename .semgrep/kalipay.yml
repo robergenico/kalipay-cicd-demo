@@ -1,0 +1,26 @@
+rules:
+  - id: kalipay-pan-en-clair
+    languages: [python]
+    severity: ERROR
+    message: >-
+      Ce code semble manipuler un numéro de carte (PAN). Hors du périmètre carte (Z9),
+      seuls les jetons sont autorisés (exigence E2, PCI-DSS).
+    patterns:
+      - pattern-either:
+          - pattern: $NAME = ...
+          - pattern: "def $F(..., $NAME, ...): ..."
+          - pattern: $OBJ.$NAME
+          - pattern: '"$NAME"'
+      - metavariable-regex:
+          metavariable: $NAME
+          regex: (?i)^(pan|card_?number|numero_?carte|cvv)$
+  - id: kalipay-flask-debug
+    languages: [python]
+    severity: ERROR
+    message: Le mode debug de Flask permet d'exécuter du code à distance.
+    pattern: $APP.run(..., debug=True, ...)
+  - id: kalipay-requests-sans-verification-tls
+    languages: [python]
+    severity: ERROR
+    message: Désactiver la vérification TLS casse le chiffrement de bout en bout (E8).
+    pattern: requests.$METHOD(..., verify=False, ...)

@@ -1,0 +1,6 @@
+# Contrôle sur le poste du développeur, avant même le push (étape 1)
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
