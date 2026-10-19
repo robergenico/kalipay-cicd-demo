@@ -81,6 +81,27 @@ Pour revenir à l'état sain : `git checkout -- . && git clean -fd app k8s infra
 Sans GitHub, `./demo/verifier-local.sh` lance les six premiers contrôles en local
 (il faut gitleaks, semgrep, trivy, checkov, conftest et kyverno dans le `PATH`).
 
+## Tester pour de vrai (Docker + Kubernetes local)
+
+Deux niveaux de test, sans GitHub ni cloud, sur n'importe quelle machine Linux avec Docker.
+
+**1. Tous les contrôles dans un conteneur.** L'image `ci/Dockerfile` contient les mêmes outils et
+versions que le pipeline (empreintes SHA-256 vérifiées au build) :
+
+```bash
+docker build -t kalipay-ci -f ci/Dockerfile .
+docker run --rm -v "$PWD:/repo" kalipay-ci
+```
+
+**2. Un vrai cluster Kubernetes (kind) avec Kyverno.** Il montre ce que le pipeline ne fait que
+simuler : un pod refusé à l'admission, et une NetworkPolicy qui coupe un flux interdit.
+
+```bash
+./demo/cluster-kind.sh creer     # cluster + Kyverno + appli, 3 à 5 min
+./demo/cluster-kind.sh tester    # 5 tests : M12 passe, M22 coupé, root et sans limites refusés
+./demo/cluster-kind.sh detruire
+```
+
 ## Mise en route sur GitHub
 
 1. Créer le dépôt et pousser `main`.

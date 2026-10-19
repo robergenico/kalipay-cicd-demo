@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: comptes
+  namespace: z1-dmz
+spec:
+  selector:
+    app: comptes
+  ports:
+    - port: 8080
+      targetPort: 8080

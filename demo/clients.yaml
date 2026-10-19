@@ -1,0 +1,53 @@
+# Deux clients de test qui appellent le service « comptes ».
+# Ils respectent eux-mêmes les politiques Kyverno : non-root, limites, pas d'escalade.
+apiVersion: v1
+kind: Pod
+metadata:
+  name: backoffice
+  namespace: z4-backoffice
+  labels:
+    app: backoffice
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: curlimages/curl:8.11.1
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+      resources:
+        limits:
+          cpu: 100m
+          memory: 64Mi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: recette
+  namespace: z3-horsprod
+  labels:
+    app: recette
+spec:
+  securityContext:
+    runAsNonRoot: true
+    runAsUser: 100
+    seccompProfile:
+      type: RuntimeDefault
+  containers:
+    - name: curl
+      image: curlimages/curl:8.11.1
+      command: ["sleep", "3600"]
+      securityContext:
+        allowPrivilegeEscalation: false
+        capabilities:
+          drop: ["ALL"]
+      resources:
+        limits:
+          cpu: 100m
+          memory: 64Mi
