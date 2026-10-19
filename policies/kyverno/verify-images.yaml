@@ -22,8 +22,8 @@ spec:
         keyless:
           identities:
             - issuer: "https://token.actions.githubusercontent.com"
-              # À adapter : owner/dépôt de la démo
-              subject: "https://github.com/OWNER/kalipay-cicd-demo/.github/workflows/pipeline.yml@refs/heads/main"
+              # Seul le pipeline de la branche main de ce dépôt peut signer
+              subject: "https://github.com/robergenico/kalipay-cicd-demo/.github/workflows/pipeline.yml@refs/heads/main"
         ctlog:
           url: https://rekor.sigstore.dev
   validations:

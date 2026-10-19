@@ -107,7 +107,7 @@ simuler : un pod refusé à l'admission, et une NetworkPolicy qui coupe un flux 
 1. Créer le dépôt et pousser `main`.
 2. *Settings → Branches* : protéger `main` (PR obligatoire, 1 revue, jobs 1 à 6 requis).
 3. *Settings → Environments* : créer `production` avec un *required reviewer*.
-4. Dans `policies/kyverno/verify-images.yaml`, remplacer `OWNER` par le compte GitHub.
+4. Si le dépôt change de compte, adapter le `subject` dans `policies/kyverno/verify-images.yaml`.
 5. Facultatif, pour le déploiement réel : appliquer `infra/terraform` sur un compte AWS de
    test, puis créer la variable de dépôt `AWS_ROLE_ARN`. Sans elle, le job de déploiement
    est simplement ignoré.
