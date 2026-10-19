@@ -111,5 +111,5 @@ demo/                   scénarios de faille et vérification locale
   ArgoCD qui *tire* les images signées dans Z5 et Z9. Le cloud n'a ainsi aucun accès entrant
   au périmètre carte. Cette partie n'est pas implémentée ici.
 - Les flux de la matrice sont simplifiés pour tenir dans un cluster (M12 en particulier).
-- Le build, le DAST, la signature et le déploiement demandent GitHub Actions et Docker. Ils
-  n'ont pas été exécutés en local, contrairement aux six premiers contrôles.
+- Le build, le scan Trivy de l'image et le DAST ZAP ont été vérifiés dans une VM de test.
+  La signature Cosign et le déploiement demandent GitHub Actions et n'ont pas encore tourné.
