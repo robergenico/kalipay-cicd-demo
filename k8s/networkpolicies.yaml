@@ -57,3 +57,25 @@ spec:
       ports:
         - protocol: TCP
           port: 8080
+---
+# Un développeur ouvre l'accès depuis la recette pour « tester plus vite »
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: comptes-depuis-recette
+  namespace: z1-dmz
+  annotations:
+    kalipay.fr/flux: M1
+spec:
+  podSelector:
+    matchLabels:
+      app: comptes
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: z3-horsprod
+      ports:
+        - protocol: TCP
+          port: 8080
