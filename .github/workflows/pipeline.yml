@@ -41,8 +41,11 @@ jobs:
           curl -sSfLo gl.tgz "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
           echo "${GITLEAKS_SHA256}  gl.tgz" | sha256sum -c -
           tar xzf gl.tgz gitleaks && sudo mv gitleaks /usr/local/bin/
-      - name: Analyser le dépôt
-        run: gitleaks git --redact --verbose --config .gitleaks.toml .
+      # On analyse l'historique du commit testé (et non toutes les branches) : chaque PR
+      # n'est jugée que sur son propre contenu. Un secret poussé sur une autre branche est
+      # déjà une fuite : il est bloqué sur sa PR, et la clé doit être révoquée.
+      - name: Analyser l'historique du commit testé
+        run: gitleaks git --redact --verbose --config .gitleaks.toml --log-opts="HEAD" .
 
   # 2. Analyse statique du code (SAST) avec les règles Kalipay (PAN en clair, TLS désactivé…)
   sast:
