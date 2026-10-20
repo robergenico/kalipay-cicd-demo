@@ -1,0 +1,1 @@
+PARTNER_API_KEY = "kp_live_ddAA4BjJUQIeEaEsSgwOtxrjyECiQglp"
